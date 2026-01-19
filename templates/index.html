@@ -3,7 +3,10 @@
 <head>
     <title>TOPSIS Output</title>
     <style>
-        body { font-family: Arial; margin: 40px; }
+        body {
+            font-family: Arial;
+            margin: 40px;
+        }
         table {
             border-collapse: collapse;
             width: 100%;
@@ -17,29 +20,26 @@
         th {
             background-color: #f2f2f2;
         }
-        .error { color: red; }
+        .message {
+            color: red;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        button {
+            padding: 8px 14px;
+            cursor: pointer;
+        }
+        pre {
+            background: #f7f7f7;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
 
 <h2>TOPSIS Decision Making Tool</h2>
 
-<form method="POST" enctype="multipart/form-data">
-    <label>Upload CSV:</label><br>
-    <input type="file" name="file" required><br><br>
-
-    <label>Weights:</label><br>
-    <input type="text" name="weights" placeholder="1,1,1,1,1" required><br><br>
-
-    <label>Impacts:</label><br>
-    <input type="text" name="impacts" placeholder="+,+,-,+,+" required><br><br>
-
-    <label>Email to send result:</label><br>
-    <input type="email" name="email" placeholder="Optional"><br><br>
-
-    <button type="submit">Calculate TOPSIS</button>
-</form>
-
+<!-- ================= SAMPLE CSV SECTION ================= -->
 <h3>Example CSV Format:</h3>
 
 <pre>
@@ -55,15 +55,32 @@ P3,300,128,16,4500
 
 <hr>
 
+<!-- ================= FORM ================= -->
+<form method="POST" enctype="multipart/form-data">
+    <label>Upload CSV:</label><br>
+    <input type="file" name="file" required><br><br>
 
+    <label>Weights:</label><br>
+    <input type="text" name="weights" placeholder="1,1,1,1" required><br><br>
 
-{% if table %}
-<h4>Output File*</h4>
-{{ table | safe }}
+    <label>Impacts:</label><br>
+    <input type="text" name="impacts" placeholder="+,+,+,+" required><br><br>
+
+    <label>Email to send result (optional):</label><br>
+    <input type="email" name="email" placeholder="Optional"><br><br>
+
+    <button type="submit">Calculate TOPSIS</button>
+</form>
+
+<!-- ================= MESSAGE ================= -->
+{% if message %}
+<p class="message">{{ message }}</p>
 {% endif %}
 
-{% if error %}
-<p class="error">{{ error }}</p>
+<!-- ================= OUTPUT TABLE ================= -->
+{% if table %}
+<h3>Output File*</h3>
+{{ table | safe }}
 {% endif %}
 
 </body>
