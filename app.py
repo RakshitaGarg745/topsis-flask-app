@@ -89,9 +89,6 @@ def index():
 
     return render_template("index.html", table=table, message=message)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
-
 from flask import send_from_directory
 
 @app.route("/download-sample")
@@ -101,5 +98,6 @@ def download_sample():
         path="sample.csv",
         as_attachment=True
     )
-
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
 
