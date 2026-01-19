@@ -43,6 +43,7 @@ def index():
     message = None
 
     if request.method == "POST":
+        # ===== STEP 1: TOPSIS (MUST ALWAYS RUN) =====
         try:
             file = request.files["file"]
             email = request.form.get("email", "").strip()
@@ -51,7 +52,6 @@ def index():
 
             df = pd.read_csv(file)
 
-            # Validation
             if len(weights) != df.shape[1] - 1:
                 raise Exception("Number of weights must match number of criteria")
 
@@ -61,28 +61,27 @@ def index():
             if not all(i in ['+', '-'] for i in impacts):
                 raise Exception("Impacts must be + or - only")
 
-            # ✅ TOPSIS ALWAYS RUNS
             result = topsis(df, weights, impacts)
 
             os.makedirs("output", exist_ok=True)
             output_file = "output/topsis_result.csv"
             result.to_csv(output_file, index=False)
 
-            # ✅ TABLE ALWAYS GENERATED
+            # ✅ TABLE CREATED HERE — SAFE
             table = result.to_html(index=False)
 
-            # 🔐 EMAIL IS TRULY OPTIONAL
-            if email:
-                try:
-                    send_email(email, output_file)
-                    message = "TOPSIS calculated and email sent successfully."
-                except Exception:
-                    message = "TOPSIS calculated. Email could not be sent."
-            else:
-                message = "TOPSIS calculated successfully."
-
         except Exception as e:
-            message = str(e)
+            return render_template("index.html", table=None, message=str(e))
+
+        # ===== STEP 2: EMAIL (OPTIONAL, NEVER BLOCKS) =====
+        if email:
+            try:
+                send_email(email, output_file)
+                message = "TOPSIS calculated. Email sent successfully."
+            except Exception:
+                message = "TOPSIS calculated. Email could not be sent."
+        else:
+            message = "TOPSIS calculated successfully."
 
     return render_template("index.html", table=table, message=message)
 
