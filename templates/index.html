@@ -35,18 +35,20 @@
     <input type="text" name="impacts" placeholder="+,+,-,+,+" required><br><br>
 
     <label>Email to send result:</label><br>
-    <input type="email" name="email" required><br><br>
+    <input type="email" name="email" placeholder="Optional"><br><br>
 
     <button type="submit">Calculate TOPSIS</button>
 </form>
 
-{% if error %}
-<p class="error">{{ error }}</p>
-{% endif %}
+
 
 {% if table %}
 <h3>Output File*</h3>
 {{ table | safe }}
+{% endif %}
+
+{% if error %}
+<p class="error">{{ error }}</p>
 {% endif %}
 
 </body>
