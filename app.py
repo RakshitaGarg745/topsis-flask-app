@@ -40,18 +40,18 @@ def send_email(receiver, file_path):
 @app.route("/", methods=["GET", "POST"])
 def index():
     table = None
-    error = None
+    message = None
 
     if request.method == "POST":
         try:
             file = request.files["file"]
-            email = request.form["email"]
+            email = request.form.get("email", "").strip()
             weights = list(map(float, request.form["weights"].split(",")))
             impacts = request.form["impacts"].split(",")
 
             df = pd.read_csv(file)
 
-            # ✅ VALIDATION (HERE)
+            # Validation
             if len(weights) != df.shape[1] - 1:
                 raise Exception("Number of weights must match number of criteria")
 
@@ -61,26 +61,30 @@ def index():
             if not all(i in ['+', '-'] for i in impacts):
                 raise Exception("Impacts must be + or - only")
 
+            # ✅ TOPSIS ALWAYS RUNS
             result = topsis(df, weights, impacts)
 
             os.makedirs("output", exist_ok=True)
             output_file = "output/topsis_result.csv"
             result.to_csv(output_file, index=False)
 
-            try:
-                send_email(email, output_file)
-            except Exception as mail_error:
-                error = "TOPSIS calculated, but email could not be sent."
-
+            # ✅ TABLE ALWAYS GENERATED
             table = result.to_html(index=False)
 
-    
-    
-        except Exception as e:
-            import traceback
-            error = traceback.format_exc()
+            # 🔐 EMAIL IS TRULY OPTIONAL
+            if email:
+                try:
+                    send_email(email, output_file)
+                    message = "TOPSIS calculated and email sent successfully."
+                except Exception:
+                    message = "TOPSIS calculated. Email could not be sent."
+            else:
+                message = "TOPSIS calculated successfully."
 
-    return render_template("index.html", table=table, error=error)
+        except Exception as e:
+            message = str(e)
+
+    return render_template("index.html", table=table, message=message)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
