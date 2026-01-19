@@ -92,5 +92,14 @@ def index():
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
 
-   
+from flask import send_from_directory
+
+@app.route("/download-sample")
+def download_sample():
+    return send_from_directory(
+        directory="static",
+        path="sample.csv",
+        as_attachment=True
+    )
+
 

@@ -40,10 +40,25 @@
     <button type="submit">Calculate TOPSIS</button>
 </form>
 
+<h3>Example CSV Format:</h3>
+
+<pre>
+Model,Price,Storage,Camera,Battery
+P1,250,64,12,4000
+P2,200,32,8,3500
+P3,300,128,16,4500
+</pre>
+
+<a href="/download-sample">
+    <button type="button">📥 Download Sample CSV File</button>
+</a>
+
+<hr>
+
 
 
 {% if table %}
-<h3>Output File*</h3>
+<h4>Output File*</h4>
 {{ table | safe }}
 {% endif %}
 
