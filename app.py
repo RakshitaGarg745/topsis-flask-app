@@ -67,7 +67,8 @@ def index():
             table = result.to_html(index=False)
 
        except Exception as e:
-        error = str(e)
+        import traceback
+        error = traceback.format_exc()
 
 
     return render_template("index.html", table=table, error=error)
