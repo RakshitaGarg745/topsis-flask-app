@@ -8,7 +8,7 @@ import os
 app = Flask(__name__)
 
 # 🔐 CHANGE THESE
-import os
+
 
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
@@ -35,9 +35,6 @@ def send_email(receiver, file_path):
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(SENDER_EMAIL, APP_PASSWORD)
         server.send_message(msg)
-
-print("SENDER:", SENDER_EMAIL)
-print("PASSWORD EXISTS:", bool(APP_PASSWORD))
 
 
 @app.route("/", methods=["GET", "POST"])
