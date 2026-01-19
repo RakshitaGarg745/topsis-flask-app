@@ -15,6 +15,9 @@ APP_PASSWORD = os.getenv("APP_PASSWORD")
 
 
 def send_email(receiver, file_path):
+    if not SENDER_EMAIL or not APP_PASSWORD:
+        raise Exception("Email credentials not configured on server")
+
     msg = EmailMessage()
     msg["Subject"] = "TOPSIS Result"
     msg["From"] = SENDER_EMAIL
@@ -30,8 +33,9 @@ def send_email(receiver, file_path):
         )
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login("SENDER_EMAIL", "APP_PASSWORD")
+        server.login(SENDER_EMAIL, APP_PASSWORD)
         server.send_message(msg)
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -63,7 +67,7 @@ def index():
             output_file = "output/topsis_result.csv"
             result.to_csv(output_file, index=False)
 
-            #send_email(email, output_file)
+            send_email(email, output_file)
             table = result.to_html(index=False)
 
        except Exception as e:
