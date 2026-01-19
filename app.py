@@ -43,7 +43,7 @@ def index():
     error = None
 
     if request.method == "POST":
-       try:
+        try:
             file = request.files["file"]
             email = request.form["email"]
             weights = list(map(float, request.form["weights"].split(",")))
@@ -67,13 +67,18 @@ def index():
             output_file = "output/topsis_result.csv"
             result.to_csv(output_file, index=False)
 
-            send_email(email, output_file)
+            try:
+                send_email(email, output_file)
+            except Exception as mail_error:
+                error = "TOPSIS calculated, but email could not be sent."
+
             table = result.to_html(index=False)
 
-       except Exception as e:
-        import traceback
-        error = traceback.format_exc()
-
+    
+    
+        except Exception as e:
+            import traceback
+            error = traceback.format_exc()
 
     return render_template("index.html", table=table, error=error)
 
