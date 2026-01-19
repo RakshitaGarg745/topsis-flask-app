@@ -30,7 +30,7 @@ def send_email(receiver, file_path):
         )
 
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login("rgarg2_be23@thapar.edu", "opzasjpnwucftdft")
+        server.login("SENDER_EMAIL", "APP_PASSWORD")
         server.send_message(msg)
 
 @app.route("/", methods=["GET", "POST"])
@@ -39,32 +39,41 @@ def index():
     error = None
 
     if request.method == "POST":
-        try:
-            file = request.files["file"]
-            email = request.form["email"]
-            weights = list(map(float, request.form["weights"].split(",")))
-            impacts = request.form["impacts"].split(",")
+    try:
+        file = request.files["file"]
+        email = request.form["email"]
+        weights = list(map(float, request.form["weights"].split(",")))
+        impacts = request.form["impacts"].split(",")
 
-            df = pd.read_csv(file)
-            result = topsis(df, weights, impacts)
+        df = pd.read_csv(file)
 
-            os.makedirs("output", exist_ok=True)
-            output_file = "output/topsis_result.csv"
-            result.to_csv(output_file, index=False)
+        # ✅ VALIDATION (HERE)
+        if len(weights) != df.shape[1] - 1:
+            raise Exception("Number of weights must match number of criteria")
 
-            send_email(email, output_file)
+        if len(impacts) != df.shape[1] - 1:
+            raise Exception("Number of impacts must match number of criteria")
 
-            table = result.to_html(
-                index=False,
-                classes="table",
-                border=1
-            )
+        if not all(i in ['+', '-'] for i in impacts):
+            raise Exception("Impacts must be + or - only")
 
-        except Exception as e:
-            error = str(e)
+        result = topsis(df, weights, impacts)
+
+        os.makedirs("output", exist_ok=True)
+        output_file = "output/topsis_result.csv"
+        result.to_csv(output_file, index=False)
+
+        send_email(email, output_file)
+        table = result.to_html(index=False)
+
+    except Exception as e:
+        error = str(e)
+
 
     return render_template("index.html", table=table, error=error)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
+
+   
 
