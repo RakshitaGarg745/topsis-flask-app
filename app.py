@@ -79,7 +79,7 @@ def index():
                 send_email(email, output_file)
                 message = "TOPSIS calculated. Email sent successfully."
             except Exception:
-                message = "TOPSIS calculated. Email could not be sent."
+                message = "TOPSIS calculated."
         else:
             message = "TOPSIS calculated successfully."
 
