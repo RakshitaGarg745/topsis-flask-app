@@ -36,6 +36,9 @@ def send_email(receiver, file_path):
         server.login(SENDER_EMAIL, APP_PASSWORD)
         server.send_message(msg)
 
+print("SENDER:", SENDER_EMAIL)
+print("PASSWORD EXISTS:", bool(APP_PASSWORD))
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
