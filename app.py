@@ -39,34 +39,34 @@ def index():
     error = None
 
     if request.method == "POST":
-    try:
-        file = request.files["file"]
-        email = request.form["email"]
-        weights = list(map(float, request.form["weights"].split(",")))
-        impacts = request.form["impacts"].split(",")
+       try:
+            file = request.files["file"]
+            email = request.form["email"]
+            weights = list(map(float, request.form["weights"].split(",")))
+            impacts = request.form["impacts"].split(",")
 
-        df = pd.read_csv(file)
+            df = pd.read_csv(file)
 
-        # ✅ VALIDATION (HERE)
-        if len(weights) != df.shape[1] - 1:
-            raise Exception("Number of weights must match number of criteria")
+            # ✅ VALIDATION (HERE)
+            if len(weights) != df.shape[1] - 1:
+                raise Exception("Number of weights must match number of criteria")
 
-        if len(impacts) != df.shape[1] - 1:
-            raise Exception("Number of impacts must match number of criteria")
+            if len(impacts) != df.shape[1] - 1:
+                raise Exception("Number of impacts must match number of criteria")
 
-        if not all(i in ['+', '-'] for i in impacts):
-            raise Exception("Impacts must be + or - only")
+            if not all(i in ['+', '-'] for i in impacts):
+                raise Exception("Impacts must be + or - only")
 
-        result = topsis(df, weights, impacts)
+            result = topsis(df, weights, impacts)
 
-        os.makedirs("output", exist_ok=True)
-        output_file = "output/topsis_result.csv"
-        result.to_csv(output_file, index=False)
+            os.makedirs("output", exist_ok=True)
+            output_file = "output/topsis_result.csv"
+            result.to_csv(output_file, index=False)
 
-        send_email(email, output_file)
-        table = result.to_html(index=False)
+            send_email(email, output_file)
+            table = result.to_html(index=False)
 
-    except Exception as e:
+       except Exception as e:
         error = str(e)
 
 
