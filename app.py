@@ -63,7 +63,7 @@ def index():
             output_file = "output/topsis_result.csv"
             result.to_csv(output_file, index=False)
 
-            send_email(email, output_file)
+            #send_email(email, output_file)
             table = result.to_html(index=False)
 
        except Exception as e:
